@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Список книг</title>
+</head>
+
+<body>
+    <h1>
+        <a href="{% url 'book_list' %}" style="text-decoration: none">Список книг</a>
+        <a href="/admin" class="admin-button">Админ панель</a>
+    </h1>
+    {% if user.is_authenticated %}
+    <p>Здравствуйте, {{ user.username }}!</p>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Выйти</button>
+    </form>
+    {% endif %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>
+                    <a
+                        href="?order_by=title&direction={% if order_by == 'title' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Название
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=author&direction={% if order_by == 'author' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Автор
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=status&direction={% if order_by == 'status' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Статус
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=renter_name&direction={% if order_by == 'renter_name' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Арендатор
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=rent_date&direction={% if order_by == 'rent_date' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Дата аренды
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=return_date&direction={% if order_by == 'return_date' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Дата возврата
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=is_overdue&direction={% if order_by == 'is_overdue' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Просрочено?
+                    </a>
+                </th>
+                <th>
+                    <a
+                        href="?order_by=penalty&direction={% if order_by == 'penalty' and direction == 'asc' %}desc{% else %}asc{% endif %}">
+                        Штраф
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.get_status_display }}</td>
+                <td>{{ book.renter_name }}</td>
+                <td>{{ book.rent_date }}</td>
+                <td>{{ book.return_date }}</td>
+                <td>{{ book.is_overdue|yesno:"Да,Нет" }}</td>
+                <td>{{ book.penalty }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>Книги отсутствуют.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        font-family: "Segoe UI";
+    }
+
+    tr:nth-child(2n) {
+        background: #f9f9f9;
+    }
+
+    tr {
+        border-bottom: 1px solid #ccc;
+    }
+
+    td,
+    th {
+        padding: 2px 1em 2px 5px;
+    }
+
+    th {
+        text-align: left;
+        border-bottom: 3px solid #ccc;
+    }
+
+    .admin-button {
+        font-size: 0.5em;
+        margin-left: 20px;
+        padding: 5px 10px;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+</style>
